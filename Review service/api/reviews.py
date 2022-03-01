@@ -1,51 +1,49 @@
 from typing import List
 from fastapi import APIRouter, HTTPException
 
-from schemas import Book
+from schemas import Review
 
 mock_db = [{
-    'name': 'Brave New World',
-    'plot': 'A new innovative world with no touch to the natural habitat of humans',
-    'genres': ['Fiction'],
-    'year': 1932
+    'content': 'Brave New World'
+
 }]
 
 # registered a new API route using the APIRouter from FastAPI
-books = APIRouter()
+reviews = APIRouter()
 
 
 # GET
-@books.get('/books', response_model=List[Book])
+@reviews.get('/reviews', response_model=List[Review])
 async def index():
     return mock_db
 
 
 # POST
 # payload - the info received from/sent to the server
-@books.post('/add', status_code=201)
-async def add_book(payload: Book):
+@reviews.post('/add', status_code=201)
+async def add_book(payload: Review):
     book = payload.dict()
     mock_db.append(book)
     return {'id': len(mock_db) - 1}
 
 
 # UPDATE
-@books.put('/{id}')
-async def update_book(id: int, payload: Book):
-    book = payload.dict()
-    books_len = len(mock_db)
+@reviews.put('/{id}')
+async def update_book(id: int, payload: Review):
+    review = payload.dict()
+    reviews_len = len(mock_db)
     # check if the list is empty
-    if 0 <= id <= books_len:
+    if 0 <= id <= reviews_len:
         # id is the index of the mock db
-        mock_db[id] = book
+        mock_db[id] = review
         return None
     raise HTTPException(status_code=404, detail="Book with given id not found")
 
 
-@books.delete('/{id}')
+@reviews.delete('/{id}')
 async def delete_movie(id: int):
-    books_len = len(mock_db)
-    if 0 <= id <= books_len:
+    reviews_len = len(mock_db)
+    if 0 <= id <= reviews_len:
         del mock_db[id]
         return None
     raise HTTPException(status_code=404, detail="Book with given id not found")

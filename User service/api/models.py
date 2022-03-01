@@ -2,7 +2,7 @@ from .database import Base
 import sqlalchemy as sa
 
 
-class Book(Base):
-    __tablename__ = "Book"
+class User(Base):
+    __tablename__ = "User"
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    title = sa.Column(sa.String(length=255), nullable=False)
+    name = sa.Column(sa.String(length=255), nullable=False)

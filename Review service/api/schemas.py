@@ -1,8 +1,5 @@
 from typing import List
 from pydantic import BaseModel
 
-class Book(BaseModel):
-    name: str
-    plot: str
-    genres: List[str]
-    year: int
+class Review(BaseModel):
+    content: str
