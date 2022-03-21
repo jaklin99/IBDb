@@ -11,18 +11,20 @@ mock_db = [{
 }]
 
 # registered a new API route using the APIRouter from FastAPI
-books = APIRouter()
+books = APIRouter(
+    prefix="books"
+)
 
 
 # GET
-@books.get('/books', response_model=List[Book])
+@books.get('/', response_model=List[Book])
 async def index():
     return mock_db
 
 
 # POST
 # payload - the info received from/sent to the server
-@books.post('/add', status_code=201)
+@books.post('/', status_code=201)
 async def add_book(payload: Book):
     book = payload.dict()
     mock_db.append(book)
