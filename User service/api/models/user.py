@@ -1,4 +1,4 @@
-from api import Base
+from app import Base
 from typing import Optional
 from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordBearer

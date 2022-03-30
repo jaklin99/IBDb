@@ -1,4 +1,5 @@
-"""First test
+"""
+First test
 
 Revision ID: 23caeb7af323
 Revises: 

@@ -12,7 +12,7 @@ mock_db = [{
 
 # registered a new API route using the APIRouter from FastAPI
 books = APIRouter(
-    prefix="books"
+    prefix="/books"
 )
 
 
@@ -45,7 +45,7 @@ async def update_book(id: int, payload: Book):
 
 
 @books.delete('/{id}')
-async def delete_movie(id: int):
+async def delete_book(id: int):
     books_len = len(mock_db)
     if 0 <= id <= books_len:
         del mock_db[id]

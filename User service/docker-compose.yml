@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   bookservice:
-    image: bookservice
+    image: userservice
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -11,7 +11,7 @@ services:
 
   postgres:
     image: postgis/postgis:13-3.1-alpine
-    container_name: bookservice-postgres
+    container_name: userservice-postgres
     environment:
       POSTGRES_USER: $DATABASE_USERNAME
       POSTGRES_PASSWORD: $DATABASE_PASSWORD
