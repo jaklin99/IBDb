@@ -9,13 +9,17 @@ from pydantic import (
 )
 
 
-class User(BaseModel):
+class UserBase(BaseModel):
     username: str
+    password: str
     email: Optional[str] = None
-    full_name: Optional[str] = None
-    disabled: Optional[bool] = None
 
+class UserCreate(UserBase):
+    pass
 
-class UserInDB(User):
-    hashed_password: str
+class User(UserBase):
+    id: int
 
+    # book_id: int
+    class Config:  # used to provide configurations to Pydantic
+        orm_mode = True

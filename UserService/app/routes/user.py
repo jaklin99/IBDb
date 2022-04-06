@@ -2,10 +2,10 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.schemas.user import User, UserInDB
+from app.schemas.user import User
 from fastapi import Depends
 
-# from app.services.user import get_current_active_user, get_current_user, fake_hash_password
+# from app.crud.user import get_current_active_user, get_current_user, fake_hash_password
 
 mock_db = [{
     'name': 'John',
