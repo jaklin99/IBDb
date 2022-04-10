@@ -1,15 +1,11 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 
-from app.schemas import book
-
-mock_db = [{
-    'name': 'Brave New World',
-    'plot': 'A new innovative world with no touch to the natural habitat of humans',
-    'genres': ['Fiction'],
-    'author': 'Aldous Huxley',
-    'year': 1932
-}]
+from app.crud import book as crudBook
+from app.database.database import engine, get_db
+from app.models.book import Book as bookModel
+from app.schemas import book as schemas
 
 # registered a new API route using the APIRouter from FastAPI
 books = APIRouter(
@@ -18,37 +14,35 @@ books = APIRouter(
 
 
 # GET
-@books.get('/', response_model=List[book.Book])
-async def index():
-    return mock_db
+@books.get('/', response_model=List[schemas.BookBase])
+async def get_all_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    books_db = crudBook.get_books(db, skip=skip, limit=limit)
+    return books_db
 
+
+
+@books.get('/{id}', response_model=List[schemas.Book])
+async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
+    book_db = crudBook.get_book_by_id(db, book_id)
+    if not book_db:
+        raise HTTPException(status_code=404, detail=f"Book with such id: {book_id} not found")
+
+    return book_db
 
 # POST
 # payload - the info received from/sent to the server
-@books.post('/', status_code=201)
-async def add_book(payload: book.Book):
-    book = payload.dict()
-    mock_db.append(book)
-    return {'id': len(mock_db) - 1}
+@books.post('/', status_code=201, response_model=schemas.BookCreate)
+async def add_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
+    return crudBook.create_book(db, book)
 
 
 # UPDATE
 @books.put('/{id}')
-async def update_book(id: int, payload: book.Book):
-    book = payload.dict()
-    books_len = len(mock_db)
-    # check if the list is empty
-    if 0 <= id <= books_len:
-        # id is the index of the mock db
-        mock_db[id] = book
-        return None
-    raise HTTPException(status_code=404, detail="Book with given id not found")
+async def update_book():
+    return crudBook.update_book()
 
 
+# DELETE
 @books.delete('/{id}')
-async def delete_book(id: int):
-    books_len = len(mock_db)
-    if 0 <= id <= books_len:
-        del mock_db[id]
-        return None
-    raise HTTPException(status_code=404, detail="Book with given id not found")
+async def delete_book():
+    return crudBook.delete_book()

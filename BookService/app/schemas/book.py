@@ -4,9 +4,8 @@ from pydantic import BaseModel
 
 
 class BookBase(BaseModel):
-    name: str
-    plot: str
-    genres: List[str]
+    title: str
+    genre: List[str]
     author: str
     year: int
 

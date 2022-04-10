@@ -4,11 +4,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: uvicorn app.api.server:app --reload --workers 1 --host 0.0.0.0 --port 8001
+    command: uvicorn app.api.server:app --reload --host 0.0.0.0 --port 8001
     env_file:
       - ./.env
     ports:
-      - 8001:8001
+      - 8001:8000
     depends_on:
       - "db"
   db:
@@ -19,4 +19,4 @@ services:
       POSTGRES_USER: $DATABASE_USERNAME
       POSTGRES_PASSWORD: $DATABASE_PASSWORD
     ports:
-      - 5432:5432
+      - 5435:5432
