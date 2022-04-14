@@ -12,7 +12,7 @@ def get_reviews(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Review).offset(skip).limit(limit).all()
 
 
-def create_book(db: Session, review: schemas.Review):
+def create_review(db: Session, review: schemas.Review):
     review_db = models.Review(**review.dict())
     db.add(review_db)
     db.commit()

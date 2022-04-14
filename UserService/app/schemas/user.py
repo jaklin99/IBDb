@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import (
     BaseModel,
@@ -7,15 +7,42 @@ from pydantic import (
     validator,
     root_validator
 )
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    OAuth2PasswordRequestForm,
+    SecurityScopes,
+)
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+    scopes: List[str] = []
 
 
 class UserBase(BaseModel):
     username: str
     password: str
-    email: Optional[str] = None
+    email: EmailStr
+
+
+class UserInDB(UserBase):
+    hashed_password: str
+
 
 class UserCreate(UserBase):
     pass
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserIn(UserBase):
+    password: str
+
 
 class User(UserBase):
     id: int

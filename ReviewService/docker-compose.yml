@@ -10,8 +10,8 @@ services:
     ports:
       - 8002:8000
     depends_on:
-      - "db"
-  db:
+      - "review-db"
+  review-db:
     image: postgres:13-alpine
     env_file:
       - ./.env
