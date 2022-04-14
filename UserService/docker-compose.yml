@@ -4,6 +4,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+<<<<<<< HEAD
 #    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
     env_file:
       - ./.env
@@ -12,6 +13,16 @@ services:
     depends_on:
       - "user-db"
   user-db:
+=======
+    command: uvicorn app.api.server:app --reload --host 0.0.0.0 --port 8001
+    env_file:
+      - ./.env
+    ports:
+      - 8001:8000
+    depends_on:
+      - "db"
+  db:
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47
     image: postgres:13-alpine
     env_file:
       - ./.env
@@ -19,4 +30,8 @@ services:
       POSTGRES_USER: $DATABASE_USERNAME
       POSTGRES_PASSWORD: $DATABASE_PASSWORD
     ports:
+<<<<<<< HEAD
       - "5435:5432"
+=======
+      - 5435:5432
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47

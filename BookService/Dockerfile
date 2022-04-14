@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM python:3.10-slim-buster
+=======
+FROM python:3.10-slim
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47
 
 WORKDIR /BookService/app
 

@@ -1,5 +1,6 @@
 from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordBearer
+<<<<<<< HEAD
 from passlib.context import CryptContext
 from starlette.middleware.cors import CORSMiddleware
 
@@ -27,6 +28,19 @@ app.add_middleware(
 
 app.include_router(user.users)
 
+=======
+from app.routes import user
+
+
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+app = FastAPI()
+
+app.include_router(user.users)
+
+
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47
 # @app.get("/items/")
 # async def read_items(token: str = Depends(oauth2_scheme)):
 #     return {"token": token}

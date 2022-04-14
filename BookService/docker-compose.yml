@@ -4,14 +4,23 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+<<<<<<< HEAD
 #    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+=======
+    command: uvicorn app.api.server:app --reload --host 0.0.0.0 --port 8000
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47
     env_file:
       - ./.env
     ports:
       - 8000:8000
     depends_on:
+<<<<<<< HEAD
       - "book-db"
   book-db:
+=======
+      - "db"
+  db:
+>>>>>>> 65c530dc3ff53bccb3ee14a8f4b31d4238c52a47
     image: postgres:13-alpine
     env_file:
       - ./.env

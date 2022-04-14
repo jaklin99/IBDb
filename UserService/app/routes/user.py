@@ -1,52 +1,95 @@
 from typing import List
-from fastapi import APIRouter
-from sqlalchemy.orm import Session
-from app.database import engine, get_db
-from app.crud import user as crudUser
-from app.schemas import user as schemas
-from fastapi import Depends, HTTPException
+from fastapi import APIRouter, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+
+from app.schemas.user import User
+from fastapi import Depends
+
+# from app.crud.user import get_current_active_user, get_current_user, fake_hash_password
+
+mock_db = [{
+    'name': 'John',
+
+}]
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
 
 
 # registered a new API route using the APIRouter from FastAPI
 users = APIRouter(
-    prefix="/users",
-    tags=['Users']
+    prefix="/users"
 )
 
 
 # GET
-@users.get('/', response_model=List[schemas.User])
-async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    user_db = crudUser.get_users(db, skip=skip, limit=limit)
-    return user_db
+@users.get('/', response_model=List[User])
+async def index():
+    return mock_db
 
 
-@users.get("/{id}", response_model=schemas.User)
-async def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
-    user_db = crudUser.get_user_by_id(db, user_id)
-    if not user_db:
-        raise HTTPException(status_code=404, detail=f"User with such id: {user_id} not found")
-
-    return user_db
-
-
-# POST
-@users.post('/', status_code=201, response_model=schemas.User)
-async def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crudUser.create_user(user, db)
+# @users.get("/users/me")
+# async def read_users_me(current_user: User = Depends(get_current_user)):
+#     return current_user
+#
+#
+# @users.get("/users/me")
+# async def read_users_me(current_user: User = Depends(get_current_active_user)):
+#     return current_user
+#
+#
+# # POST
+# # payload - the info received from/sent to the server
+# @users.post('/', status_code=201)
+# async def add_user(payload: User):
+#     user = payload.dict()
+#     mock_db.append(user)
+#     return {'id': len(mock_db) - 1}
+#
+#
+# @users.post("/token")
+# async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+#     user_dict = fake_users_db.get(form_data.username)
+#     if not user_dict:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+#     user = UserInDB(**user_dict)
+#     hashed_password = fake_hash_password(form_data.password)
+#     if not hashed_password == user.hashed_password:
+#         raise HTTPException(status_code=400, detail="Incorrect username or password")
+#
+#     return {"access_token": user.username, "token_type": "bearer"}
 
 
 # UPDATE
 @users.put('/{id}')
-async def update_user():
-    return crudUser.update_user()
+async def update_user(id: int, payload: User):
+    user = payload.dict()
+    users_len = len(mock_db)
+    # check if the list is empty
+    if 0 <= id <= users_len:
+        # id is the index of the mock db
+        mock_db[id] = user
+        return None
+    raise HTTPException(status_code=404, detail="Book with given id not found")
 
-# DELETE
-@users.delete('/{user_id}', status_code=204)
-async def delete_book(user_id: int, db: Session = Depends(get_db)):
-    user_db = crudUser.get_user_by_id(db, user_id)
-    if not user_db:
-        raise HTTPException(status_code=404, detail=f"Book with such id: {user_id} not found")
 
-    return crudUser.delete_user(db, user_db)
-
+@users.delete('/{id}')
+async def delete_user(id: int):
+    users_len = len(mock_db)
+    if 0 <= id <= users_len:
+        del mock_db[id]
+        return None
+    raise HTTPException(status_code=404, detail="Book with given id not found")
