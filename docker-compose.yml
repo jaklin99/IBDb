@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  users_service:
+    build: ./ibdb-userservice
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - 8001:8000
+    environment:
+      - DATABASE_URI=postgresql://users_username:users_password@users-db/users_db_dev
+    depends_on:
+      - users_db
+
+  users_db:
+    image: postgres:12.1-alpine
+    environment:
+      - POSTGRES_USER=users_username
+      - POSTGRES_PASSWORD=users_password
+      - POSTGRES_DB=users_db_dev
+
+  books_service:
+    build: ././ibdb-bookservice
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - 8002:8000
+    environment:
+      - DATABASE_URI=postgresql://users_username:users_password@users-db/users_db_dev
+      - USERS_SERVICE_HOST_URL=http://users_service:8000/users/
+    depends_on:
+      - books_db
+
+  books_db:
+    image: postgres:12.1-alpine
+    environment:
+      - POSTGRES_USER=books_username
+      - POSTGRES_PASSWORD=books_password
+      - POSTGRES_DB=book_db_dev
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - users_service
+      - books_service
