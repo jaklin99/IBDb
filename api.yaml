@@ -1,0 +1,45 @@
+# kubernetes-fastapi LoadBalancer Service
+# Enables the pods in a deployment to be accessible from outside the cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: ibdb-svc
+spec:
+  selector:
+    app: ibdb-svc
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+
+---
+# kf-api Deployment
+# Defines the deployment of the app running in a pod on any worker node
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibdb-deployment
+  labels:
+    app: ibdb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ibdb-deployment
+  template:
+    metadata:
+      labels:
+        app: ibdb-deployment
+    spec:
+      containers:
+        - name: ibdb-deployment
+          image: eu.gcr.io/ibdb:v1
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          resources:
+            # You must specify requests for CPU to autoscale
+            # based on CPU utilization
+            requests:
+              cpu: "250m"
