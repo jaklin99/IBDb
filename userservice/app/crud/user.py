@@ -13,20 +13,31 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(user: schemas.UserCreate, db: Session):
-    # hash the password - user.password
-    hashed_password = utils.hash(user.password)
-    user.password = hashed_password
+def get_user(db: Session, id: int):
+    db_user = db.query(models.User).filter(models.User.id == id).first()
+    return db_user
 
-    user_db = models.User(**user.dict())
+
+def create_user(username, email, password, db: Session):
+    # hash the password - user.password
+    hashed_password = utils.hash(password)
+    password = hashed_password
+
+    user_db = models.User(username=username, email=email, password=password)
     db.add(user_db)
     db.commit()
-    db.close()
+    db.refresh(user_db)
     return f"Created book {user_db}"
 
 
-def update_user(db: Session, user_id: int, user: schemas.User):
-    return None
+def update_user(db: Session, id: int, username: str, email: str):
+    db_user = get_user(db=db, id=id)
+    db_user.username = username
+    db_user.email = email
+
+    db.commit()
+    db.refresh(db_user)  # refresh the attribute of the given instance
+    return db_user
 
 
 def delete_user(db: Session, user: schemas.User):

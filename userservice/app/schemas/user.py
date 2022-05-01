@@ -36,12 +36,12 @@ class UserInDB(UserBase):
 class UserCreate(UserBase):
     pass
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-class UserIn(UserBase):
-    password: str
+# class UserLogin(BaseModel):
+#     email: EmailStr
+#     password: str
+#
+# class UserIn(UserBase):
+#     password: str
 
 
 class User(UserBase):
