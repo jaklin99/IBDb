@@ -1,4 +1,4 @@
-contents: read
+name: CI
 
 on: [push]
 
