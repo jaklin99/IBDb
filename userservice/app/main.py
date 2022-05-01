@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from starlette.middleware.cors import CORSMiddleware
 
-from app.routes import user
+from .routes import user
 
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
