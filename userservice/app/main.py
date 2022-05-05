@@ -9,23 +9,22 @@ from app.routes import user
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="token",
-    scopes={"me": "Read information about the current user.", "items": "Read items."},
+    tokenUrl="token"
 )
 
 app = FastAPI()
 
 origins = {
-    "http://localhost",
     "http://localhost:3000",
+    "http://localhost:8081",
 }
 
 app.add_middleware(
-   CORSMiddleware,
-    allow_origins = origins,
-    allow_credentials =True,
-    allow_methods = ["*"],
-    allow_headers= ["*"],
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(user.users)

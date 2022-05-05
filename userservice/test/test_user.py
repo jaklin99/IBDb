@@ -1,47 +1,30 @@
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import requests
+import string
+import random
+from config import config
 
-from app.database import Base, get_db
-from app.main import app
-
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+username = None
+password = None
+token = None
 
 
-Base.metadata.create_all(bind=engine)
+def test_post_users():
+    global username
+    global password
+    username = ''.join(random.sample(string.ascii_letters, 8))
+    password = ''.join(random.sample(string.ascii_letters, 8))
+    payload = {
+        "username": username,
+        "password": password
+    }
+    r = requests.post(f'{config.API_URL}/users/', json=payload)
+    assert r.status_code == 200
 
 
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-
-client = TestClient(app)
-
-
-def test_create_user():
-    response = client.post(
-        "/users/",
-        json={"email": "deadpool@example.com", "password": "chimichangas4life"},
-    )
-    assert response.status_code == 200, response.text
-    data = response.json()
-    assert data["email"] == "deadpool@example.com"
-    assert "id" in data
-    user_id = data["id"]
-
-    response = client.get(f"/users/{user_id}")
-    assert response.status_code == 200, response.text
-    data = response.json()
-    assert data["email"] == "deadpool@example.com"
-    assert data["id"] == user_id
+def test_post_token():
+    global token
+    payload = {"username": username, "password": password}
+    r = requests.post(f'{config.API_URL}/token', data=payload)
+    json = r.json()
+    token = json['access_token']
+    assert r.status_code == 200

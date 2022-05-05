@@ -21,10 +21,7 @@ def upgrade():
         'Books',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
         sa.Column('title', sa.String(length=255), nullable=False),
-        sa.Column('user_id', sa.Integer, nullable=False),
-        # sa.Column('author', sa.String(length=255), nullable=False),
-        # sa.Column('genre', sa.String(length=255), nullable=False),
-        # sa.Column('year', sa.Integer, nullable=False),
+        # sa.Column('user_id', sa.Integer, nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

@@ -5,9 +5,9 @@ from pydantic import BaseModel
 
 class BookBase(BaseModel):
     title: str
-    genre: str
-    author: str
-    year: int
+    # genre: str
+    # author: str
+    # year: int
 
 
 class BookCreate(BookBase):

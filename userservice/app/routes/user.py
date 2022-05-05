@@ -57,7 +57,7 @@ def update_user(id:int, username:str, email:str, db:Session=Depends(get_db)):
         updated_friend = crudUser.update_user(db=db, id=id, username=username, email=email)
         return updated_friend
     else:
-        return {"error": f"Friend with id {id} does not exist"}
+        return {"error": f"User with id {id} does not exist"}
 
 
 # DELETE
@@ -65,7 +65,7 @@ def update_user(id:int, username:str, email:str, db:Session=Depends(get_db)):
 async def delete_book(user_id: int, db: Session = Depends(get_db)):
     user_db = crudUser.get_user_by_id(db, user_id)
     if not user_db:
-        raise HTTPException(status_code=404, detail=f"Book with such id: {user_id} not found")
+        raise HTTPException(status_code=404, detail=f"User with such id: {user_id} not found")
 
     return crudUser.delete_user(db, user_db)
 

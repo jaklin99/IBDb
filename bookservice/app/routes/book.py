@@ -31,7 +31,7 @@ async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
 
 # POST
 # payload - the info received from/sent to the server
-@books.post('/', status_code=201, response_model=schemas.Book)
+@books.post('/add', status_code=201, response_model=schemas.Book)
 async def add_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
     return crudBook.create_book(db, book)
 
