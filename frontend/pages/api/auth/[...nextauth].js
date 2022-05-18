@@ -10,7 +10,6 @@ export default NextAuth({
         email: {
           label: "email",
           type: "email",
-          placeholder: "jj",
         },
         password: { label: "Password", type: "password" },
       },
@@ -20,7 +19,7 @@ export default NextAuth({
           password: credentials.password,
         };
 
-        const res = await fetch("http://localhost:8001", {
+        const res = await fetch("http://localhost:8001/api/users/login", {
           method: "POST",
           body: JSON.stringify(payload),
           headers: {
