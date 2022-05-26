@@ -12,3 +12,4 @@ class UserOut(UserIn):
 
 class UserUpdate(UserIn):
     name: Optional[str] = None
+    email: Optional[str] = None
