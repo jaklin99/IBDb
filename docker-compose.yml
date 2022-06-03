@@ -1,6 +1,32 @@
 version: '3.8'
 
 services:
+  auth_service:
+    image: auth_service
+    container_name: auth_service
+    build: ./auth-service
+    volumes:
+      - ./auth-service:/app/
+    environment:
+      - DATABASE_URL=postgresql://auth_db_username:auth_db_password@auth_db/auth_db_dev
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY}
+      - AUTH_TOKEN_ALGORITHM=${AUTH_TOKEN_ALGORITHM}
+      - AUTH_ACCESS_TOKEN_EXPIRE_MINUTES=${AUTH_ACCESS_TOKEN_EXPIRE_MINUTES}
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:14.2-alpine
+    container_name: auth_db
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=auth_db_username
+      - POSTGRES_PASSWORD=auth_db_password
+      - POSTGRES_DB=auth_db_dev
+    ports:
+      - "5436:5432"
+
   book_service:
     image: book_service
     container_name: book_service
@@ -8,10 +34,8 @@ services:
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
     volumes:
       - ./book-service:/app/
-    ports:
-      - 8001:8001
     environment:
-      - DATABASE_URI=postgresql://book_db_username:book_db_password@book_db/book_db_dev
+      - DATABASE_URL=postgresql://book_db_username:book_db_password@book_db/book_db_dev
       - USER_SERVICE_HOST_URL=http://user_service:8002/api/users/
     depends_on:
       - book_db
@@ -25,7 +49,7 @@ services:
       - POSTGRES_PASSWORD=book_db_password
       - POSTGRES_DB=book_db_dev
     ports:
-          - "5435:5432"
+      - "5435:5432"
 
   user_service:
     image: user_service
@@ -34,10 +58,8 @@ services:
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8002
     volumes:
       - ./user-service:/app/
-    ports:
-      - 8002:8002
     environment:
-      - DATABASE_URI=postgresql://user_db_username:user_db_password@user_db/user_db_dev
+      - DATABASE_URL=postgresql://user_db_username:user_db_password@user_db/user_db_dev
     depends_on:
       - user_db
 
@@ -52,12 +74,39 @@ services:
     ports:
       - "5434:5432"
 
+  review_service:
+    image: review_service
+    container_name: review_service
+    build: ./review-service
+    volumes:
+      - ./review-service:/app/
+    environment:
+      - DATABASE_URL=postgresql://review_db_username:review_db_password@review_db/review_db_dev
+      - USER_SERVICE_HOST_URL=http://user_service:8002/api/users/
+      - BOOK_SERVICE_HOST_URL=http://book_service:8001/api/books/
+    depends_on:
+      - "review_db"
+
+  review_db:
+    image: postgres:14.2-alpine
+    container_name: review_db
+    volumes:
+      - postgres_data_review:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=review_db_username
+      - POSTGRES_PASSWORD=review_db_password
+      - POSTGRES_DB=review_db_dev
+    ports:
+      - "5437:5432"
+
   nginx:
     image: nginx:1.21.6
     container_name: nginx_gateway
     depends_on:
+      - auth_service
       - book_service
       - user_service
+      - review_service
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
@@ -66,3 +115,6 @@ services:
 volumes:
   postgres_data_book:
   postgres_data_user:
+  postgres_data_auth:
+  postgres_data_review:
+  

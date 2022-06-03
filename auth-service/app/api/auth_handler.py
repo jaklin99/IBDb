@@ -2,7 +2,8 @@ import os
 from fastapi import Depends, HTTPException, Security, status
 from datetime import datetime, timedelta
 from typing import Union
-from jose import JWTError, jwt
+from jose import JWTError
+import jwt
 from passlib.context import CryptContext
 from app.api.models import User, TokenData
 from app.api import db_manager

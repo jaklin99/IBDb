@@ -5,9 +5,9 @@ from sqlalchemy import (Column, Integer, MetaData, String, Table,
 
 from databases import Database
 
-DATABASE_URI = os.getenv('DATABASE_URI')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-engine = create_engine(DATABASE_URI)
+engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
 users = Table(
@@ -18,4 +18,4 @@ users = Table(
     Column('email', String(100)),
 )
 
-database = Database(DATABASE_URI)
+database = Database(DATABASE_URL)

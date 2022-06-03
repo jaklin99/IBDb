@@ -13,4 +13,4 @@ RUN pip install -r /app/requirements.txt \
 
 COPY . /app/
 
-EXPOSE 8002
+EXPOSE 8000
