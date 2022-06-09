@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 import jwt
 from fastapi.encoders import jsonable_encoder
-from app.api.models import UserIn, UserOut, UserUpdate, LoginItem
-from app.api import db_manager, utils
+from app.api.models import UserIn, UserOut, UserUpdate
+from app.api import db_manager
 
 users = APIRouter()
 

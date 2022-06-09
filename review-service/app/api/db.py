@@ -8,8 +8,8 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
-comments = Table(
-    'comments',
+reviews = Table(
+    'reviews',
     metadata,
     Column('id', Integer, primary_key=True),
     Column('content', String(1000), nullable=False),

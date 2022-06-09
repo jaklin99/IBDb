@@ -6,24 +6,24 @@ from app.api.models import ReviewIn, ReviewOut, ReviewUpdate
 from app.api import db_manager
 from app.api.service import is_user_present, is_article_present
 
-comments = APIRouter()
+reviews = APIRouter()
 
 
-@comments.get('/', response_model=List[ReviewOut])
+@reviews.get('/', response_model=List[ReviewOut])
 async def index():
     return await db_manager.get_all_articles()
 
 
-@comments.get('/{id}', response_model=ReviewOut)
-async def get_comment(id: int):
-    comment = await db_manager.get_comment(id)
-    if not comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
-    return comment
+@reviews.get('/{id}', response_model=ReviewOut)
+async def get_review(id: int):
+    review = await db_manager.get_review(id)
+    if not review:
+        raise HTTPException(status_code=404, detail="review not found")
+    return review
 
 
-@comments.post('/', status_code=201)
-async def create_comment(payload: ReviewIn):
+@reviews.post('/', status_code=201)
+async def create_review(payload: ReviewIn):
     userId = payload.userId
     articleId = payload.articleId
 
@@ -34,33 +34,33 @@ async def create_comment(payload: ReviewIn):
         raise HTTPException(
             status_code=404, detail=f"Article with id:{articleId} not found")
 
-    commentId = await db_manager.add_comment(payload)
+    reviewId = await db_manager.add_review(payload)
     response = {
-        'id': commentId,
+        'id': reviewId,
         **payload.dict()
     }
 
     return response
 
 
-@comments.put('/{id}')
-async def update_comment(id: int, payload: ReviewUpdate):
-    comment = await db_manager.get_comment(id)
-    if not comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
+@reviews.put('/{id}')
+async def update_review(id: int, payload: ReviewUpdate):
+    review = await db_manager.get_review(id)
+    if not review:
+        raise HTTPException(status_code=404, detail="review not found")
 
     update_data = payload.dict(exclude_unset=True)
 
-    comment_in_db = ReviewIn(**comment)
+    review_in_db = ReviewIn(**review)
 
-    updated_comment = comment_in_db.copy(update=update_data)
+    updated_review = review_in_db.copy(update=update_data)
 
-    return await db_manager.update_comment(id, updated_comment)
+    return await db_manager.update_review(id, updated_review)
 
 
-@comments.delete('/{id}')
-async def delete_comment(id: int):
-    comment = await db_manager.get_comment(id)
-    if not comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
-    return await db_manager.delete_comment(id)
+@reviews.delete('/{id}')
+async def delete_review(id: int):
+    review = await db_manager.get_review(id)
+    if not review:
+        raise HTTPException(status_code=404, detail="review not found")
+    return await db_manager.delete_review(id)
